@@ -18,3 +18,12 @@ html , body {
   
   
 }
+
+table, th, td {
+  border-bottom: 1px solid black;
+  border-collapse: collapse;
+}
+th, td {
+  padding: 5px;
+  text-align: left;
+}

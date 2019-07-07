@@ -1,12 +1,16 @@
-import React, { Component } from "react"
-import { compose } from "recompose"
+import React, { Component } from "react";
+import { compose } from "recompose";
 import {
   withScriptjs,
   withGoogleMap,
   GoogleMap,
   Marker,
   InfoWindow
-} from "react-google-maps"
+} from "react-google-maps";
+
+import {Table} from "reactstrap";
+
+
 
 const MapWithAMarker = compose(withScriptjs, withGoogleMap)(props => {
 
@@ -39,9 +43,15 @@ export default class App extends Component {
     super(props)
     this.state = {
       shelters: [],
-      selectedMarker: false
+      selectedMarker: false,
+      count:0
+            
     }
   }
+
+  
+
+
   componentDidMount() {
     fetch("https://api.myjson.com/bins/hq9bo")
       .then(r => r.json())
@@ -59,11 +69,31 @@ export default class App extends Component {
     
   }
 
+  increment = (e) => {
+    console.log("this is a increment method")
+    //let tempCart = [...this.state.selectedMarker];
+    //const selectedProduct = tempCart.saplings.find(item=>
+      //item.types['102205'].name === e.target.value)
+    //const index = tempCart.indexOf(selectedProduct);
+    //const product = tempCart[index];
+    //product.count = product.count +1;
+    //console.log(product.count)
+
+
+    
+
+  }
+
+  decrement = (e) => {
+    console.log("this is a decrement method")
+
+  }
+
   
   render() {
     return (
       <div className="row">
-      <div style={{width:'63%'}}>
+      <div style={{width:'60%'}}>
       <MapWithAMarker
         selectedMarker={this.state.selectedMarker}
         markers={this.state.shelters}
@@ -74,20 +104,50 @@ export default class App extends Component {
         mapElement={<div style={{ height: `200%` }} />}
       />
       </div> 
-      <div style={{width:'37%'}}>
+      <div style={{width:'40%'}}>
         <div style={{textAlign:"center"}}>
         
         
         
         {this.state.selectedMarker?<h2>{this.state.selectedMarker.name}</h2>:<h2>You haven't select any marker yet.</h2>} 
         <p> {this.state.selectedMarker.address}</p>
-    <p> {"Contact No."} {this.state.selectedMarker.contactNumber}</p>
+    <p>{this.state.selectedMarker?<span>"Contact No." {this.state.selectedMarker.contactNumber}</span>:""}</p>
 
-    
+    {this.state.selectedMarker && <div>
+      {this.state.selectedMarker.saplings.map((item, index)=>
+        (
+          <Table border><tbody>
+{item.types['102205'] && <tr scope="row"><td>{item.name}{item.types['102205'].name}</td><td> &#8377;{item.types['102205'].price}</td>
+<td> <button onClick={this.decrement} value={item.types['102205'].name}>
+                -
+              </button>
+              <span className="btn btn-black mx-1">{this.state.count}</span>
+              <button onClick={this.increment} value={item.types['102205'].name}>
+                +
+              </button>
+              </td>
+<td>{item.types['102205'].quantity+ "Left"}</td></tr>}
+{item.types['102204'] && <tr scope="row"><td>{item.name}{item.types['102204'].name}</td><td>&#8377;{item.types['102204'].price}</td>
+<td> <button onClick={this.decrement} value={item.types['102204'].name}>
+                -
+              </button>
+              <span className="btn btn-black mx-1">{this.state.count}</span>
+              <button onClick={this.increment} value={item.types['102204'].name}>
+                +
+              </button></td>
+<td>{item.types['102204'].quantity+ "Left"}</td></tr>}</tbody>
+ </Table>
+        ))}</div>}
+
+        {this.state.selectedMarker?<span><button>RESERVE MY SAPPLINGS</button>
+        <p> A minimum bill of INR 10 is required to complete the booking </p></span>:""}
+
+
 
     
     </div>
-     </div> 
+     
+      </div>
       </div>
     );
   }
